@@ -12,6 +12,7 @@ const AppNavigator = createStackNavigator({
 }, {
     defaultNavigationOptions: {
       header: null,
+      
     }
   }
 );

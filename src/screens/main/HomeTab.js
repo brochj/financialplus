@@ -21,6 +21,7 @@ const HomeTabNavigator = createMaterialTopTabNavigator({
                 marginTop: statusBarHeight,
                 height: 45
             }
+            
         }
     });
 
