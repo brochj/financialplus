@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Button } from "react-native";
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, FlatList } from "react-native";
 import { TextInputMask, MaskService } from "react-native-masked-text";
 import R from 'res/R';
 
@@ -7,7 +7,7 @@ export default class Home extends React.Component {
 
     static navigationOptions = {
         title: 'Home',
-        
+
     };
 
     constructor(props) {
@@ -28,14 +28,66 @@ export default class Home extends React.Component {
             isPeriodoAnual: false,
             isPeriodoMensal: true,
 
-
             resultado: 0,
             resutadoTxt: "",
+            relatorioData: [],
         }
         this.jurosCompostos = this.jurosCompostos.bind(this);
         this.setPeriodoTipo = this.setPeriodoTipo.bind(this);
         this.maskNumber = this.maskNumber.bind(this);
+        this.relatorio = this.relatorio.bind(this);
+        this.flatRender = this.flatRender.bind(this);
+        this.mensalToAnual = this.mensalToAnual.bind(this);
+        this.mesesToAnos = this.mesesToAnos.bind(this);
+    }
+    relatorio() {
+        function insertValues (index) {
+            s.juros = s.montante - s.capital;
+            s.relatorioData.push({
+                key: index.toString(),
+                montante: s.montante,
+                juros: s.juros,
+            });
+        }
+        let s = this.state;
+        if (s.capital != 0 && s.taxa != 0 && s.periodo != 0) {
+            s.relatorioData = [];
+            s.montante = 0;
 
+            if (this.state.isPeriodoAnual && this.state.isTaxaMensal) {
+                for (let i = 1; i <= s.periodo * 12; i++) {
+                    if (s.montante == 0) {
+                        s.montante = s.capital * (1 + s.taxa / 100);
+                        insertValues(i);
+                    } else {
+                        s.montante = s.montante * (1 + s.taxa / 100);
+                        insertValues(i);
+                    }
+                }
+            } else if (this.state.isPeriodoMensal && this.state.isTaxaAnual) {
+                for (let i = 1; i <= s.periodo / 12; i++) {
+                    if (s.montante == 0) {
+                        s.montante = s.capital * (1 + s.taxa / 100);
+                        insertValues(i);
+                    } else {
+                        s.montante = s.montante * (1 + s.taxa / 100);
+                        insertValues(i);
+                    }
+                }
+            } else if ((this.state.isPeriodoAnual && this.state.isTaxaAnual) ||
+                (this.state.isPeriodoMensal && this.state.isTaxaMensal)) {
+                for (let i = 1; i <= s.periodo; i++) {
+                    if (s.montante == 0) {
+                        s.montante = s.capital * (1 + s.taxa / 100);
+                        insertValues(i);
+                    } else {
+                        s.montante = s.montante * (1 + s.taxa / 100);
+                        insertValues(i);
+                    }
+                }
+            }
+        }
+        this.setState(s);
     }
     setPeriodoTipo(tipo) {
         let s = this.state;
@@ -56,33 +108,61 @@ export default class Home extends React.Component {
         this.setState(s);
         this.jurosCompostos();
     }
-
+    mensalToAnual(){
+        /* converte a taxa do input qndo der um LongPress.
+        taxa mensal --> taxa anual 
+        taxa anual --> taxa mensal*/
+        let s = this.state;
+        if(!s.isTaxaAnual){
+            s.taxa = (-1 + Math.pow((1 + (s.taxa / 100)), 12)) * 100;
+            s.isTaxaMensal = false;
+            s.isTaxaAnual = true;
+        } else if(!s.isTaxaMensal){
+            s.taxa = (-1 + Math.pow((1 + (s.taxa / 100)), 1/12)) * 100;
+            s.isTaxaMensal = true;
+            s.isTaxaAnual = false;
+        }
+        this.setState(s);
+        this.jurosCompostos();
+    }
+    mesesToAnos(){
+         /* converte o periodo do input qndo der um LongPress.
+        periodo mensal --> periodo anual 
+        periodo anual --> periodo mensal*/
+        let s = this.state;
+        if(!s.isPeriodoAnual){
+            s.periodo = s.periodo /12;  
+            s.isPeriodoMensal = false;
+            s.isPeriodoAnual = true;
+        } else if(!s.isPeriodoMensal){
+            s.periodo = s.periodo *12;  
+            s.isPeriodoMensal = true;
+            s.isPeriodoAnual = false;
+        }
+        this.setState(s);
+        this.jurosCompostos();
+    }
     maskNumber(num) {
         let maskedNum = MaskService.toMask('money', num, {
             unit: '$',
             separator: ',',
             delimiter: '.'
         })
-        return(maskedNum);
+        return (maskedNum);
     }
     jurosCompostos() {
         let s = this.state;
-
-        if (this.state.isPeriodoAnual && this.state.isTaxaMensal) {
-            if (s.capital != 0 && s.taxa != 0 && s.periodo != 0) {// se for passado valores,
+        if (s.capital != 0 && s.taxa != 0 && s.periodo != 0) {// se for passado valores,
+            if (this.state.isPeriodoAnual && this.state.isTaxaMensal) {
                 s.montante = s.capital * Math.pow((1 + (s.taxa / 100)), s.periodo * 12);
                 s.juros = s.montante - s.capital;
-            }
-        } else if (this.state.isPeriodoMensal && this.state.isTaxaAnual) {
 
-            if (s.capital != 0 && s.taxa != 0 && s.periodo != 0) {// se for passado valores,
+            } else if (this.state.isPeriodoMensal && this.state.isTaxaAnual) {
                 s.montante = s.capital * Math.pow((1 + (s.taxa / 100)), s.periodo / 12);
                 s.juros = s.montante - s.capital;
-            }
-        } else if ((this.state.isPeriodoAnual && this.state.isTaxaAnual) ||
-            (this.state.isPeriodoMensal && this.state.isTaxaMensal)) {
 
-            if (s.capital != 0 && s.taxa != 0 && s.periodo != 0) {// se for passado valores,
+            } else if ((this.state.isPeriodoAnual && this.state.isTaxaAnual) ||
+                (this.state.isPeriodoMensal && this.state.isTaxaMensal)) {
                 s.montante = s.capital * Math.pow((1 + (s.taxa / 100)), s.periodo);
                 s.juros = s.montante - s.capital;
             }
@@ -107,6 +187,18 @@ export default class Home extends React.Component {
         s.periodo = rawText;
         this.setState(s);
         this.jurosCompostos();
+    }
+
+    flatRender(item, index) {
+        return (
+            <View style={styles.flatItem}>
+                {this.state.isTaxaMensal ?
+                    <Text >{R.strings.home.mes}: {item.key}</Text>:
+                    <Text >{R.strings.home.ano}: {item.key}</Text> }
+                <Text >Juros: {this.maskNumber(item.juros)}</Text>
+                <Text>Montante: {this.maskNumber(item.montante)}</Text>
+            </View>
+        );
     }
 
     render() {
@@ -214,14 +306,16 @@ export default class Home extends React.Component {
                         <View style={switchStyles.switch}>
                             <TouchableOpacity
                                 style={[switchStyles.Touch, switchStyles.taxaMensalBg]}
+                                onLongPress={this.mensalToAnual}
                                 onPress={() => this.setPeriodoTipo('isTaxaMensal')}>
-                                <Text style={[switchStyles.txt, switchStyles.taxaMensalTxt]} >Mensal</Text>
+                                <Text style={[switchStyles.txt, switchStyles.taxaMensalTxt]} >{R.strings.home.mensal}</Text>
                             </TouchableOpacity>
 
                             <TouchableOpacity
                                 style={[switchStyles.Touch, switchStyles.taxaAnualBg]}
+                                onLongPress={this.mensalToAnual}
                                 onPress={() => this.setPeriodoTipo('isTaxaAnual')}>
-                                <Text style={[switchStyles.txt, switchStyles.taxaAnualTxt]} >Anual</Text>
+                                <Text style={[switchStyles.txt, switchStyles.taxaAnualTxt]} >{R.strings.home.anual}</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -249,14 +343,16 @@ export default class Home extends React.Component {
                         <View style={switchStyles.switch}>
                             <TouchableOpacity
                                 style={[switchStyles.Touch, switchStyles.periodoMensalBg]}
+                                onLongPress={this.mesesToAnos}
                                 onPress={() => this.setPeriodoTipo('isPeriodoMensal')}>
-                                <Text style={[switchStyles.txt, switchStyles.periodoMensalTxt]} >Meses</Text>
+                                <Text style={[switchStyles.txt, switchStyles.periodoMensalTxt]} >{R.strings.home.meses}</Text>
                             </TouchableOpacity>
 
                             <TouchableOpacity
                                 style={[switchStyles.Touch, switchStyles.periodoAnualBg]}
+                                onLongPress={this.mesesToAnos}
                                 onPress={() => this.setPeriodoTipo('isPeriodoAnual')}>
-                                <Text style={[switchStyles.txt, switchStyles.periodoAnualTxt]} >Anos</Text>
+                                <Text style={[switchStyles.txt, switchStyles.periodoAnualTxt]} >{R.strings.home.anos}</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -264,19 +360,20 @@ export default class Home extends React.Component {
 
 
                     <View style={styles.calcRow}>
-                        <TouchableOpacity style={styles.touchOpacity} onPress={this.jurosCompostos}>
+                        <TouchableOpacity style={styles.touchOpacity} onPress={this.relatorio}>
                             <Text style={[styles.txt, styles.txtButton]} >Calcular</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
 
                 {/* <Button style={styles.txtButton} onPress={this.calcular} title='Calcular' /> */}
-                <View style={styles.resultRow}>
-                    <Text style={[styles.txt, styles.resultTxt]}>{this.state.montante}</Text>
-                    <Text style={[styles.resultTxt, { fontSize: 20 }]}>{this.state.capital}</Text>
-                    <Text style={[styles.resultTxt, { fontSize: 20 }]}>{this.state.taxa}</Text>
-                    <Text style={[styles.resultTxt, { fontSize: 20 }]}>{this.state.periodo}</Text>
-                </View>
+                <ScrollView style={styles.resultRow}>
+                    <FlatList style={styles.flatList}
+                        data={this.state.relatorioData}
+                        extraData={this.state}
+                        renderItem={({ item, index }) => this.flatRender(item, index)} />
+
+                </ScrollView>
             </View >
         );
     }
@@ -335,7 +432,7 @@ const styles = StyleSheet.create({
     },
 
     resultRow: {
-        alignItems: 'center',
+        flex: 1,
         marginHorizontal: 10,
         marginVertical: 10,
     },
@@ -354,6 +451,23 @@ const styles = StyleSheet.create({
     resultTxt: {
         ...R.palette.lightTxt,
 
+    },
+
+    flatList: {
+        backgroundColor: '#FFF',
+    },
+    flatNome: {
+        fontSize: 26,
+    },
+    flatNome: {
+        fontSize: 14,
+    },
+    flatItem: {
+        padding: 10,
+        borderWidth: 1,
+        borderColor: 'black',
+        borderRadius: 3,
+        margin: 5,
     },
 
 

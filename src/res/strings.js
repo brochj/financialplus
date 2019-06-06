@@ -15,10 +15,12 @@ const strings = {
         capital: 'Capital',
         taxa: 'Taxa (%)',
         periodo: 'Período',
-        anual: 'Anual',
-        anos: 'Anos',
-        mensal: 'Meses',
         mes: 'Mês',
+        ano: 'Ano',
+        anos: 'Anos',
+        meses: 'Meses',
+        anual: 'Anual',
+        mensal: 'Mensal',
     }
 }
 
