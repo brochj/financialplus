@@ -15,6 +15,8 @@ const strings = {
         capital: 'Capital',
         taxa: 'Taxa (%)',
         periodo: 'Período',
+        juros: 'Juros',
+        montante: 'Montante',
         mes: 'Mês',
         ano: 'Ano',
         anos: 'Anos',

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, FlatList } from "react-native";
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, FlatList, KeyboardAvoidingView, Platform, ProgressBarAndroid } from "react-native";
 import { TextInputMask, MaskService } from "react-native-masked-text";
 import R from 'res/R';
 
@@ -7,6 +7,7 @@ export default class Home extends React.Component {
 
     static navigationOptions = {
         title: 'Home',
+
 
     };
 
@@ -31,6 +32,7 @@ export default class Home extends React.Component {
             resultado: 0,
             resutadoTxt: "",
             relatorioData: [],
+            Progress_Value: 0.00,
         }
         this.jurosCompostos = this.jurosCompostos.bind(this);
         this.setPeriodoTipo = this.setPeriodoTipo.bind(this);
@@ -41,7 +43,7 @@ export default class Home extends React.Component {
         this.mesesToAnos = this.mesesToAnos.bind(this);
     }
     relatorio() {
-        function insertValues (index) {
+        function insertValues(index) {
             s.juros = s.montante - s.capital;
             s.relatorioData.push({
                 key: index.toString(),
@@ -106,40 +108,43 @@ export default class Home extends React.Component {
             s.isPeriodoAnual = true;
         }
         this.setState(s);
+        this.Stop_Progress();
         this.jurosCompostos();
     }
-    mensalToAnual(){
+    mensalToAnual() {
         /* converte a taxa do input qndo der um LongPress.
         taxa mensal --> taxa anual 
         taxa anual --> taxa mensal*/
         let s = this.state;
-        if(!s.isTaxaAnual){
+        if (!s.isTaxaAnual) {
             s.taxa = (-1 + Math.pow((1 + (s.taxa / 100)), 12)) * 100;
             s.isTaxaMensal = false;
             s.isTaxaAnual = true;
-        } else if(!s.isTaxaMensal){
-            s.taxa = (-1 + Math.pow((1 + (s.taxa / 100)), 1/12)) * 100;
+        } else if (!s.isTaxaMensal) {
+            s.taxa = (-1 + Math.pow((1 + (s.taxa / 100)), 1 / 12)) * 100;
             s.isTaxaMensal = true;
             s.isTaxaAnual = false;
         }
         this.setState(s);
+        this.Stop_Progress();
         this.jurosCompostos();
     }
-    mesesToAnos(){
-         /* converte o periodo do input qndo der um LongPress.
-        periodo mensal --> periodo anual 
-        periodo anual --> periodo mensal*/
+    mesesToAnos() {
+        /* converte o periodo do input qndo der um LongPress.
+       periodo mensal --> periodo anual 
+       periodo anual --> periodo mensal*/
         let s = this.state;
-        if(!s.isPeriodoAnual){
-            s.periodo = s.periodo /12;  
+        if (!s.isPeriodoAnual) {
+            s.periodo = s.periodo / 12;
             s.isPeriodoMensal = false;
             s.isPeriodoAnual = true;
-        } else if(!s.isPeriodoMensal){
-            s.periodo = s.periodo *12;  
+        } else if (!s.isPeriodoMensal) {
+            s.periodo = s.periodo * 12;
             s.isPeriodoMensal = true;
             s.isPeriodoAnual = false;
         }
         this.setState(s);
+        this.Stop_Progress();
         this.jurosCompostos();
     }
     maskNumber(num) {
@@ -188,14 +193,31 @@ export default class Home extends React.Component {
         this.setState(s);
         this.jurosCompostos();
     }
-
+    Start_Progress = () => {
+        this.value = setInterval(() => {
+            if (this.state.Progress_Value <= 1) {
+                let s = this.state;
+                s.Progress_Value += .12
+                this.setState(s);
+            }
+        }, 50);
+    }
+    Stop_Progress = () => {
+        clearInterval(this.value);
+        this.Clear_Progress();
+    }
+    Clear_Progress = () => {
+        let s = this.state;
+        s.Progress_Value = 0.0;
+        this.setState(s);
+    }
     flatRender(item, index) {
         return (
             <View style={styles.flatItem}>
                 {this.state.isTaxaMensal ?
-                    <Text >{R.strings.home.mes}: {item.key}</Text>:
-                    <Text >{R.strings.home.ano}: {item.key}</Text> }
-                <Text >Juros: {this.maskNumber(item.juros)}</Text>
+                    <Text >{R.strings.home.mes}: {item.key}</Text> :
+                    <Text >{R.strings.home.ano}: {item.key}</Text>}
+                <Text >Juros total: {this.maskNumber(item.juros)}</Text>
                 <Text>Montante: {this.maskNumber(item.montante)}</Text>
             </View>
         );
@@ -259,11 +281,13 @@ export default class Home extends React.Component {
         }
 
         return (
-            <View style={styles.container}>
-                <Text style={[styles.txt, { color: 'black' }]}>{this.maskNumber(this.state.montante)}</Text>
-
+            <View style={styles.container} behavior={Platform.OS === "ios" ? "padding" : null}
+                style={{ flex: 1 }}>
+                <ProgressBarAndroid style={{ marginTop: -5 }} color={R.colors.actionButton} styleAttr="Horizontal" progress={this.state.Progress_Value} indeterminate={false} />
+                <Text style={[styles.txt, { color: 'black' }]}>{R.strings.home.montante}: {this.maskNumber(this.state.montante)}</Text>
+                <Text style={[styles.txt, { color: 'black' }]}>{R.strings.home.juros}: {this.maskNumber(this.state.juros)}</Text>
                 <View style={styles.inputContainer}>
-                    <View style={styles.inputRow}>
+                    <View style={styles.inputRow} >
                         <Text style={[styles.txt, styles.txtLabel]}>{R.strings.home.capital}</Text>
                         <TextInputMask
                             ref={(ref) => this.capitalField = ref}
@@ -283,6 +307,7 @@ export default class Home extends React.Component {
 
                         />
                     </View>
+
 
                     <View style={styles.inputRow}>
                         <Text style={[styles.txt, styles.txtLabel]}>{R.strings.home.taxa}</Text>
@@ -307,14 +332,20 @@ export default class Home extends React.Component {
                             <TouchableOpacity
                                 style={[switchStyles.Touch, switchStyles.taxaMensalBg]}
                                 onLongPress={this.mensalToAnual}
-                                onPress={() => this.setPeriodoTipo('isTaxaMensal')}>
+                                onPress={() => this.setPeriodoTipo('isTaxaMensal')}
+                                onPressIn={this.Start_Progress}
+                                onPressOut={this.Stop_Progress}
+                            >
                                 <Text style={[switchStyles.txt, switchStyles.taxaMensalTxt]} >{R.strings.home.mensal}</Text>
                             </TouchableOpacity>
 
                             <TouchableOpacity
                                 style={[switchStyles.Touch, switchStyles.taxaAnualBg]}
                                 onLongPress={this.mensalToAnual}
-                                onPress={() => this.setPeriodoTipo('isTaxaAnual')}>
+                                onPress={() => this.setPeriodoTipo('isTaxaAnual')}
+                                onPressIn={this.Start_Progress}
+                                onPressOut={this.Stop_Progress}
+                            >
                                 <Text style={[switchStyles.txt, switchStyles.taxaAnualTxt]} >{R.strings.home.anual}</Text>
                             </TouchableOpacity>
                         </View>
@@ -344,14 +375,20 @@ export default class Home extends React.Component {
                             <TouchableOpacity
                                 style={[switchStyles.Touch, switchStyles.periodoMensalBg]}
                                 onLongPress={this.mesesToAnos}
-                                onPress={() => this.setPeriodoTipo('isPeriodoMensal')}>
+                                onPress={() => this.setPeriodoTipo('isPeriodoMensal')}
+                                onPressIn={this.Start_Progress}
+                                onPressOut={this.Stop_Progress}
+                            >
                                 <Text style={[switchStyles.txt, switchStyles.periodoMensalTxt]} >{R.strings.home.meses}</Text>
                             </TouchableOpacity>
 
                             <TouchableOpacity
                                 style={[switchStyles.Touch, switchStyles.periodoAnualBg]}
                                 onLongPress={this.mesesToAnos}
-                                onPress={() => this.setPeriodoTipo('isPeriodoAnual')}>
+                                onPress={() => this.setPeriodoTipo('isPeriodoAnual')}
+                                onPressIn={this.Start_Progress}
+                                onPressOut={this.Stop_Progress}
+                            >
                                 <Text style={[switchStyles.txt, switchStyles.periodoAnualTxt]} >{R.strings.home.anos}</Text>
                             </TouchableOpacity>
                         </View>
@@ -370,19 +407,20 @@ export default class Home extends React.Component {
                 <ScrollView style={styles.resultRow}>
                     <FlatList style={styles.flatList}
                         data={this.state.relatorioData}
-                        extraData={this.state}
+                        // extraData={this.state}
                         renderItem={({ item, index }) => this.flatRender(item, index)} />
 
                 </ScrollView>
-            </View >
+            </View>
         );
     }
 }
 
 const styles = StyleSheet.create({
     container: {
-        overflow: 'hidden',
+        // overflow: 'hidden',
         flex: 1,
+        justifyContent: 'center'
     },
 
     inputContainer: {
@@ -435,6 +473,7 @@ const styles = StyleSheet.create({
         flex: 1,
         marginHorizontal: 10,
         marginVertical: 10,
+
     },
 
     txtButton: {
