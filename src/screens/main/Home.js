@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, FlatList, KeyboardAvoidingView, Platform, ProgressBarAndroid } from "react-native";
 import { TextInputMask, MaskService } from "react-native-masked-text";
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import * as Animatable from 'react-native-animatable';
 import R from 'res/R';
 
 export default class Home extends React.Component {
 
     static navigationOptions = {
-        title: 'Home',
+        title: R.strings.home.jurosCompostos,
 
 
     };
@@ -160,26 +162,26 @@ export default class Home extends React.Component {
         this.setState(s);
 
     }
-    mensalToAnual(){
+    mensalToAnual() {
         let s = this.state;
-        if(s.isTaxaAnual){
-            s.taxa = (Math.pow(1+(s.taxa/100), 1/12) -1) * 100;
+        if (s.isTaxaAnual) {
+            s.taxa = (Math.pow(1 + (s.taxa / 100), 1 / 12) - 1) * 100;
             s.isTaxaAnual = false;
             s.isTaxaMensal = true;
-        } else if (s.isTaxaMensal){
-            s.taxa = (Math.pow(1+(s.taxa/100), 12) -1) * 100;
+        } else if (s.isTaxaMensal) {
+            s.taxa = (Math.pow(1 + (s.taxa / 100), 12) - 1) * 100;
             s.isTaxaAnual = true;
             s.isTaxaMensal = false;
         }
         this.setState(s);
     }
-    mesesToAnos(){
+    mesesToAnos() {
         let s = this.state;
-        if(s.isPeriodoAnual){
-            s.periodo *= 12 ;
+        if (s.isPeriodoAnual) {
+            s.periodo *= 12;
             s.isPeriodoAnual = false;
             s.isPeriodoMensal = true;
-        } else if (s.isPeriodoMensal){
+        } else if (s.isPeriodoMensal) {
             s.periodo /= 12;
             s.isPeriodoAnual = true;
             s.isPeriodoMensal = false;
@@ -298,7 +300,15 @@ export default class Home extends React.Component {
         }
 
         return (
-            <View style={styles.container}           >
+            <KeyboardAwareScrollView 
+                resetScrollToCoords={{ x: 0, y: 0 }}
+                scrollEnabled={true}
+                // enableAutomaticScroll={true}
+                enableOnAndroid={true} 
+                extraHeight={60} 
+                extraScrollHeight={60}
+            >
+                <View>
                 <ProgressBarAndroid style={{ marginTop: -5 }} color={R.colors.actionButton} styleAttr="Horizontal" progress={this.state.Progress_Value} indeterminate={false}
                 />
                 <View style={styles.resultArea}>
@@ -443,29 +453,30 @@ export default class Home extends React.Component {
 
 
 
-                    <View style={styles.calcRow}>
+                    {/* <View style={styles.calcRow}>
                         <TouchableOpacity style={styles.touchOpacity} onPress={this.relatorio}>
                             <Text style={[styles.txt, styles.txtButton]} >Calcular</Text>
                         </TouchableOpacity>
-                    </View>
+                    </View> */}
                 </View>
 
                 {/* <Button style={styles.txtButton} onPress={this.calcular} title='Calcular' /> */}
-                <ScrollView style={styles.resultRow}>
+                {/* <ScrollView style={styles.resultRow}>
                     <FlatList style={styles.flatList}
                         data={this.state.relatorioData}
                         // extraData={this.state}
                         renderItem={({ item, index }) => this.flatRender(item, index)} />
 
-                </ScrollView>
-            </View>
+                </ScrollView> */}
+                {/* <View style={{ height: 60 }} /> */}
+                </View>
+            </KeyboardAwareScrollView>
         );
     }
 }
 
 const styles = StyleSheet.create({
     container: {
-        overflow: 'visible',
         flex: 1,
         justifyContent: 'center'
     },
@@ -525,7 +536,7 @@ const styles = StyleSheet.create({
         color: R.colors.blackish
     },
     resultValueLabel: {
-        fontSize: 30,
+        fontSize: 25,
         fontWeight: 'bold',
         color: R.colors.blackish,
     },

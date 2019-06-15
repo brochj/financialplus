@@ -1,22 +1,31 @@
 import React, { Component } from 'react';
 import { StatusBar, Platform } from "react-native";
-import { createMaterialTopTabNavigator, createBottomTabNavigator } from 'react-navigation';
+import { createMaterialTopTabNavigator, createStackNavigator } from 'react-navigation';
 import Login from './../login/Login';
 import Home from './Home';
 import R from 'res/R';
 
 const statusBarHeight = Platform.OS === 'ios' ? 20 : StatusBar.currentHeight;
 
-const HomeTabNavigator = createMaterialTopTabNavigator({
+const HomeTabNavigator = createStackNavigator({
 
     Home: {
         screen: Home
     },
     Login: {
-        screen: Login
+        screen: Login,
     },
 
 }, {
+        defaultNavigationOptions: {
+            headerStyle: {
+                backgroundColor: R.colors.blackish,
+              },
+              headerTintColor: R.palette.lightTxt.color,
+              headerTitleStyle: {
+                fontWeight: 'bold',
+              },
+        },
         tabBarOptions: {
             indicatorStyle: {
                 backgroundColor: R.colors.actionButton,

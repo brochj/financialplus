@@ -25,7 +25,8 @@ const strings = {
         mensal: 'Mensal',
         aportes: 'Aportes',
         capitalInvestido: 'Capital Investido',
-        rich: '$$$ Muito dinheiro $$$'
+        rich: '$$$ Muito dinheiro $$$',
+        jurosCompostos: 'Juros Compostos',
     }
 }
 
