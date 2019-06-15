@@ -41,6 +41,8 @@ export default class Home extends React.Component {
         this.maskNumber = this.maskNumber.bind(this);
         this.relatorio = this.relatorio.bind(this);
         this.flatRender = this.flatRender.bind(this);
+        this.mensalToAnual = this.mensalToAnual.bind(this);
+        this.mesesToAnos = this.mesesToAnos.bind(this);
     }
     relatorio() {
         function insertValues(index) {
@@ -157,6 +159,32 @@ export default class Home extends React.Component {
         }
         this.setState(s);
 
+    }
+    mensalToAnual(){
+        let s = this.state;
+        if(s.isTaxaAnual){
+            s.taxa = (Math.pow(1+(s.taxa/100), 1/12) -1) * 100;
+            s.isTaxaAnual = false;
+            s.isTaxaMensal = true;
+        } else if (s.isTaxaMensal){
+            s.taxa = (Math.pow(1+(s.taxa/100), 12) -1) * 100;
+            s.isTaxaAnual = true;
+            s.isTaxaMensal = false;
+        }
+        this.setState(s);
+    }
+    mesesToAnos(){
+        let s = this.state;
+        if(s.isPeriodoAnual){
+            s.periodo *= 12 ;
+            s.isPeriodoAnual = false;
+            s.isPeriodoMensal = true;
+        } else if (s.isPeriodoMensal){
+            s.periodo /= 12;
+            s.isPeriodoAnual = true;
+            s.isPeriodoMensal = false;
+        }
+        this.setState(s);
     }
     updateCapital = (maskedText, rawText) => {
         let s = this.state;
