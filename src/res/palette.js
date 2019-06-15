@@ -14,6 +14,9 @@ const palette = {
     lightTxt: {
         color: colors.blueish[50],
     },
+    darkTxt: {
+        color: colors.blackish,
+    },
     input: {
         borderTopRightRadius: 4,
         borderBottomRightRadius: 4,

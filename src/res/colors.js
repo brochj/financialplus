@@ -26,6 +26,8 @@ const colors = {
         A700: '#1fccff',
         'contrastDefaultColor': 'light',
     },
+
+    blackish: '#2b4141',
 };
 
 export default colors;

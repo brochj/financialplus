@@ -15,6 +15,8 @@ export default class Home extends React.Component {
         super(props)
         this.state = {
             capital: 100,
+            aportes: 0,
+            capital_inv: 0,
             periodo: 12,
             taxa: 10,
             lastTaxa: 0,
@@ -39,8 +41,6 @@ export default class Home extends React.Component {
         this.maskNumber = this.maskNumber.bind(this);
         this.relatorio = this.relatorio.bind(this);
         this.flatRender = this.flatRender.bind(this);
-        this.mensalToAnual = this.mensalToAnual.bind(this);
-        this.mesesToAnos = this.mesesToAnos.bind(this);
     }
     relatorio() {
         function insertValues(index) {
@@ -111,66 +111,49 @@ export default class Home extends React.Component {
         this.Stop_Progress();
         this.jurosCompostos();
     }
-    mensalToAnual() {
-        /* converte a taxa do input qndo der um LongPress.
-        taxa mensal --> taxa anual 
-        taxa anual --> taxa mensal*/
-        let s = this.state;
-        if (!s.isTaxaAnual) {
-            s.taxa = (-1 + Math.pow((1 + (s.taxa / 100)), 12)) * 100;
-            s.isTaxaMensal = false;
-            s.isTaxaAnual = true;
-        } else if (!s.isTaxaMensal) {
-            s.taxa = (-1 + Math.pow((1 + (s.taxa / 100)), 1 / 12)) * 100;
-            s.isTaxaMensal = true;
-            s.isTaxaAnual = false;
-        }
-        this.setState(s);
-        this.Stop_Progress();
-        this.jurosCompostos();
-    }
-    mesesToAnos() {
-        /* converte o periodo do input qndo der um LongPress.
-       periodo mensal --> periodo anual 
-       periodo anual --> periodo mensal*/
-        let s = this.state;
-        if (!s.isPeriodoAnual) {
-            s.periodo = s.periodo / 12;
-            s.isPeriodoMensal = false;
-            s.isPeriodoAnual = true;
-        } else if (!s.isPeriodoMensal) {
-            s.periodo = s.periodo * 12;
-            s.isPeriodoMensal = true;
-            s.isPeriodoAnual = false;
-        }
-        this.setState(s);
-        this.Stop_Progress();
-        this.jurosCompostos();
-    }
+
     maskNumber(num) {
-        let maskedNum = MaskService.toMask('money', num, {
-            unit: '$',
-            separator: ',',
-            delimiter: '.'
-        })
-        return (maskedNum);
+        let numString = num.toString().indexOf('.');
+        if (numString < 13) {
+            let maskedNum = MaskService.toMask('money', num, {
+                unit: '$ ',
+                separator: ',',
+                delimiter: '.'
+            })
+            return (maskedNum);
+        } else {
+            return R.strings.home.rich;
+        }
     }
     jurosCompostos() {
         let s = this.state;
+        function calculaJuros() {
+
+            s.montante = (s.capital * Math.pow((1 + (s.taxa / 100)), s.periodo)) + s.aportes * (1 + (s.taxa / 100)) * ((Math.pow(1 + (s.taxa / 100), s.periodo) - 1) / (s.taxa / 100));
+            s.capital_inv = s.capital + s.aportes * s.periodo;
+            s.juros = s.montante - s.capital_inv;
+        }
         if (s.capital != 0 && s.taxa != 0 && s.periodo != 0) {// se for passado valores,
             if (this.state.isPeriodoAnual && this.state.isTaxaMensal) {
-                s.montante = s.capital * Math.pow((1 + (s.taxa / 100)), s.periodo * 12);
-                s.juros = s.montante - s.capital;
+                s.montante = (s.capital * Math.pow((1 + (s.taxa / 100)), s.periodo * 12)) + s.aportes * (1 + (s.taxa / 100)) * ((Math.pow(1 + (s.taxa / 100), s.periodo * 12) - 1) / (s.taxa / 100));
+                s.capital_inv = s.capital + s.aportes * s.periodo * 12;
+                s.juros = s.montante - s.capital_inv;
 
             } else if (this.state.isPeriodoMensal && this.state.isTaxaAnual) {
-                s.montante = s.capital * Math.pow((1 + (s.taxa / 100)), s.periodo / 12);
-                s.juros = s.montante - s.capital;
+                s.montante = (s.capital * Math.pow((1 + (s.taxa / 100)), s.periodo / 12)) + s.aportes * 12 * (1 + (s.taxa / 100)) * ((Math.pow(1 + (s.taxa / 100), s.periodo / 12) - 1) / (s.taxa / 100));
+                s.capital_inv = s.capital + s.aportes * s.periodo;
+                s.juros = s.montante - s.capital_inv;
 
-            } else if ((this.state.isPeriodoAnual && this.state.isTaxaAnual) ||
-                (this.state.isPeriodoMensal && this.state.isTaxaMensal)) {
-                s.montante = s.capital * Math.pow((1 + (s.taxa / 100)), s.periodo);
-                s.juros = s.montante - s.capital;
+            } else if (this.state.isPeriodoAnual && this.state.isTaxaAnual) {
+                s.montante = (s.capital * Math.pow((1 + (s.taxa / 100)), s.periodo)) + s.aportes * 12 * (1 + (s.taxa / 100)) * ((Math.pow(1 + (s.taxa / 100), s.periodo) - 1) / (s.taxa / 100));
+                s.capital_inv = s.capital + s.aportes * 12 * s.periodo;
+                s.juros = s.montante - s.capital_inv;
+            } else if (this.state.isPeriodoMensal && this.state.isTaxaMensal) {
+                calculaJuros();
+
             }
+
+
         }
         this.setState(s);
 
@@ -178,6 +161,12 @@ export default class Home extends React.Component {
     updateCapital = (maskedText, rawText) => {
         let s = this.state;
         s.capital = rawText;
+        this.setState(s);
+        this.jurosCompostos();
+    }
+    updateAportes = (maskedText, rawText) => {
+        let s = this.state;
+        s.aportes = rawText;
         this.setState(s);
         this.jurosCompostos();
     }
@@ -281,11 +270,20 @@ export default class Home extends React.Component {
         }
 
         return (
-            <View style={styles.container} behavior={Platform.OS === "ios" ? "padding" : null}
-                style={{ flex: 1 }}>
-                <ProgressBarAndroid style={{ marginTop: -5 }} color={R.colors.actionButton} styleAttr="Horizontal" progress={this.state.Progress_Value} indeterminate={false} />
-                <Text style={[styles.txt, { color: 'black' }]}>{R.strings.home.montante}: {this.maskNumber(this.state.montante)}</Text>
-                <Text style={[styles.txt, { color: 'black' }]}>{R.strings.home.juros}: {this.maskNumber(this.state.juros)}</Text>
+            <View style={styles.container}           >
+                <ProgressBarAndroid style={{ marginTop: -5 }} color={R.colors.actionButton} styleAttr="Horizontal" progress={this.state.Progress_Value} indeterminate={false}
+                />
+                <View style={styles.resultArea}>
+                    <Text style={[styles.txt, styles.resultLabel]}>{R.strings.home.capitalInvestido}</Text>
+                    <Text style={[styles.txt, styles.resultValueLabel]}>{this.maskNumber(this.state.capital_inv)}</Text>
+                    <View style={styles.separador} />
+                    <Text style={[styles.txt, styles.resultLabel]}>{R.strings.home.montante}</Text>
+                    <Text style={[styles.txt, styles.resultValueLabel]}>{this.maskNumber(this.state.montante)}</Text>
+                    <View style={styles.separador} />
+                    <Text style={[styles.txt, styles.resultLabel]}>{R.strings.home.juros}</Text>
+                    <Text style={[styles.txt, styles.resultValueLabel]}>{this.maskNumber(this.state.juros)}</Text>
+                    <View style={styles.separador} />
+                </View>
                 <View style={styles.inputContainer}>
                     <View style={styles.inputRow} >
                         <Text style={[styles.txt, styles.txtLabel]}>{R.strings.home.capital}</Text>
@@ -297,7 +295,7 @@ export default class Home extends React.Component {
                             options={{
                                 separator: ',',
                                 delimiter: '.',
-                                unit: 'R$ ',
+                                unit: '$ ',
                             }}
                             placeholder='$ 0.00'
                             value={this.state.capital}
@@ -308,6 +306,27 @@ export default class Home extends React.Component {
                         />
                     </View>
 
+
+                    <View style={styles.inputRow} >
+                        <Text style={[styles.txt, styles.txtLabel]}>{R.strings.home.aportes}</Text>
+                        <TextInputMask
+                            ref={(ref) => this.capitalField = ref}
+                            style={styles.textInput}
+                            keyboardType='phone-pad'
+                            type={'money'}
+                            options={{
+                                separator: ',',
+                                delimiter: '.',
+                                unit: '$ ',
+                            }}
+                            placeholder='$ 0.00'
+                            value={this.state.aportes}
+                            includeRawValueInChangeText={true}
+                            // onChangeText={(capital) => { this.setState({ capital }) }}
+                            onChangeText={this.updateAportes}
+
+                        />
+                    </View>
 
                     <View style={styles.inputRow}>
                         <Text style={[styles.txt, styles.txtLabel]}>{R.strings.home.taxa}</Text>
@@ -418,7 +437,7 @@ export default class Home extends React.Component {
 
 const styles = StyleSheet.create({
     container: {
-        // overflow: 'hidden',
+        overflow: 'visible',
         flex: 1,
         justifyContent: 'center'
     },
@@ -448,7 +467,7 @@ const styles = StyleSheet.create({
 
 
     txt: {
-        color: '#edf2f4',
+        ...R.palette.lightTxt,
         textAlign: 'center',
         textAlignVertical: 'center',
         fontSize: 18,
@@ -459,7 +478,7 @@ const styles = StyleSheet.create({
 
     txtLabel: {
         width: '30%',
-        backgroundColor: '#2b4141',
+        backgroundColor: R.palette.darkTxt.color,
         borderTopLeftRadius: 4,
         borderBottomLeftRadius: 4,
     },
@@ -471,9 +490,18 @@ const styles = StyleSheet.create({
 
     resultRow: {
         flex: 1,
-        marginHorizontal: 10,
-        marginVertical: 10,
-
+        flexDirection: 'row'
+    },
+    resultLabel: {
+        fontSize: 15,
+        color: R.colors.blackish
+    },
+    resultValueLabel: {
+        fontSize: 30,
+        fontWeight: 'bold',
+        color: R.colors.blackish,
+    },
+    resultArea: {
     },
 
     txtButton: {
@@ -509,5 +537,10 @@ const styles = StyleSheet.create({
         margin: 5,
     },
 
-
+    separador: {
+        height: 1.5,
+        backgroundColor: R.colors.blueish[50],
+        marginVertical: 5,
+        marginHorizontal: 20,
+    }
 });

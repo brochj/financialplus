@@ -23,6 +23,9 @@ const strings = {
         meses: 'Meses',
         anual: 'Anual',
         mensal: 'Mensal',
+        aportes: 'Aportes',
+        capitalInvestido: 'Capital Investido',
+        rich: '$$$ Muito dinheiro $$$'
     }
 }
 
