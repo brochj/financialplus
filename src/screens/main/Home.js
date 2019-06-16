@@ -1,16 +1,28 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, FlatList, KeyboardAvoidingView, Platform, ProgressBarAndroid } from "react-native";
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, FlatList, KeyboardAvoidingView, Button, ProgressBarAndroid } from "react-native";
 import { TextInputMask, MaskService } from "react-native-masked-text";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { NavigationActions } from "react-navigation";
+import { DrawerActions } from 'react-navigation-drawer';
 import * as Animatable from 'react-native-animatable';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import R from 'res/R';
 
 export default class Home extends React.Component {
 
-    static navigationOptions = {
-        title: R.strings.home.jurosCompostos,
-
-
+    static navigationOptions = ({ navigation }) => {
+        return {
+            title: R.strings.home.jurosCompostos,
+            headerRight: (
+                <MaterialIcons
+                    name="menu"
+                    size={35}
+                    onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
+                    color="#fff"
+                    style={{ marginRight: 10 }}
+                />
+            ),
+        };
     };
 
     constructor(props) {
@@ -300,175 +312,176 @@ export default class Home extends React.Component {
         }
 
         return (
-            <KeyboardAwareScrollView 
+            <KeyboardAwareScrollView
                 resetScrollToCoords={{ x: 0, y: 0 }}
                 scrollEnabled={true}
                 // enableAutomaticScroll={true}
-                enableOnAndroid={true} 
-                extraHeight={60} 
+                enableOnAndroid={true}
+                extraHeight={60}
                 extraScrollHeight={60}
             >
                 <View>
-                <ProgressBarAndroid style={{ marginTop: -5 }} color={R.colors.actionButton} styleAttr="Horizontal" progress={this.state.Progress_Value} indeterminate={false}
-                />
-                <View style={styles.resultArea}>
-                    <Text style={[styles.txt, styles.resultLabel]}>{R.strings.home.capitalInvestido}</Text>
-                    <Text style={[styles.txt, styles.resultValueLabel]}>{this.maskNumber(this.state.capital_inv)}</Text>
-                    <View style={styles.separador} />
-                    <Text style={[styles.txt, styles.resultLabel]}>{R.strings.home.montante}</Text>
-                    <Text style={[styles.txt, styles.resultValueLabel]}>{this.maskNumber(this.state.montante)}</Text>
-                    <View style={styles.separador} />
-                    <Text style={[styles.txt, styles.resultLabel]}>{R.strings.home.juros}</Text>
-                    <Text style={[styles.txt, styles.resultValueLabel]}>{this.maskNumber(this.state.juros)}</Text>
-                    <View style={styles.separador} />
-                </View>
-                <View style={styles.inputContainer}>
-                    <View style={styles.inputRow} >
-                        <Text style={[styles.txt, styles.txtLabel]}>{R.strings.home.capital}</Text>
-                        <TextInputMask
-                            ref={(ref) => this.capitalField = ref}
-                            style={styles.textInput}
-                            keyboardType='phone-pad'
-                            type={'money'}
-                            options={{
-                                separator: ',',
-                                delimiter: '.',
-                                unit: '$ ',
-                            }}
-                            placeholder='$ 0.00'
-                            value={this.state.capital}
-                            includeRawValueInChangeText={true}
-                            // onChangeText={(capital) => { this.setState({ capital }) }}
-                            onChangeText={this.updateCapital}
 
-                        />
+                    <ProgressBarAndroid style={{ marginTop: -5 }} color={R.colors.actionButton} styleAttr="Horizontal" progress={this.state.Progress_Value} indeterminate={false}
+                    />
+                    <View style={styles.resultArea}>
+                        <Text style={[styles.txt, styles.resultLabel]}>{R.strings.home.capitalInvestido}</Text>
+                        <Text style={[styles.txt, styles.resultValueLabel]}>{this.maskNumber(this.state.capital_inv)}</Text>
+                        <View style={styles.separador} />
+                        <Text style={[styles.txt, styles.resultLabel]}>{R.strings.home.montante}</Text>
+                        <Text style={[styles.txt, styles.resultValueLabel]}>{this.maskNumber(this.state.montante)}</Text>
+                        <View style={styles.separador} />
+                        <Text style={[styles.txt, styles.resultLabel]}>{R.strings.home.juros}</Text>
+                        <Text style={[styles.txt, styles.resultValueLabel]}>{this.maskNumber(this.state.juros)}</Text>
+                        <View style={styles.separador} />
                     </View>
+                    <View style={styles.inputContainer}>
+                        <View style={styles.inputRow} >
+                            <Text style={[styles.txt, styles.txtLabel]}>{R.strings.home.capital}</Text>
+                            <TextInputMask
+                                ref={(ref) => this.capitalField = ref}
+                                style={styles.textInput}
+                                keyboardType='phone-pad'
+                                type={'money'}
+                                options={{
+                                    separator: ',',
+                                    delimiter: '.',
+                                    unit: '$ ',
+                                }}
+                                placeholder='$ 0.00'
+                                value={this.state.capital}
+                                includeRawValueInChangeText={true}
+                                // onChangeText={(capital) => { this.setState({ capital }) }}
+                                onChangeText={this.updateCapital}
 
-
-                    <View style={styles.inputRow} >
-                        <Text style={[styles.txt, styles.txtLabel]}>{R.strings.home.aportes}</Text>
-                        <TextInputMask
-                            ref={(ref) => this.capitalField = ref}
-                            style={styles.textInput}
-                            keyboardType='phone-pad'
-                            type={'money'}
-                            options={{
-                                separator: ',',
-                                delimiter: '.',
-                                unit: '$ ',
-                            }}
-                            placeholder='$ 0.00'
-                            value={this.state.aportes}
-                            includeRawValueInChangeText={true}
-                            // onChangeText={(capital) => { this.setState({ capital }) }}
-                            onChangeText={this.updateAportes}
-
-                        />
-                    </View>
-
-                    <View style={styles.inputRow}>
-                        <Text style={[styles.txt, styles.txtLabel]}>{R.strings.home.taxa}</Text>
-                        <TextInputMask
-                            ref={(ref) => this.taxaField = ref}
-                            style={styles.textInput}
-                            keyboardType='phone-pad'
-                            type={'money'}
-                            options={{
-                                separator: ',',
-                                delimiter: '.',
-                                unit: '',
-                                suffixUnit: ''
-                            }}
-                            placeholder='$ 0.00'
-                            value={this.state.taxa}
-                            includeRawValueInChangeText={true}
-                            onChangeText={this.updateTaxa}
-                        />
-
-                        <View style={switchStyles.switch}>
-                            <TouchableOpacity
-                                style={[switchStyles.Touch, switchStyles.taxaMensalBg]}
-                                onLongPress={this.mensalToAnual}
-                                onPress={() => this.setPeriodoTipo('isTaxaMensal')}
-                                onPressIn={this.Start_Progress}
-                                onPressOut={this.Stop_Progress}
-                            >
-                                <Text style={[switchStyles.txt, switchStyles.taxaMensalTxt]} >{R.strings.home.mensal}</Text>
-                            </TouchableOpacity>
-
-                            <TouchableOpacity
-                                style={[switchStyles.Touch, switchStyles.taxaAnualBg]}
-                                onLongPress={this.mensalToAnual}
-                                onPress={() => this.setPeriodoTipo('isTaxaAnual')}
-                                onPressIn={this.Start_Progress}
-                                onPressOut={this.Stop_Progress}
-                            >
-                                <Text style={[switchStyles.txt, switchStyles.taxaAnualTxt]} >{R.strings.home.anual}</Text>
-                            </TouchableOpacity>
+                            />
                         </View>
-                    </View>
 
-                    <View style={styles.inputRow}>
-                        <Text style={[styles.txt, styles.txtLabel]}>{R.strings.home.periodo}</Text>
-                        <TextInputMask
-                            ref={(ref) => this.periodoField = ref}
-                            style={styles.textInput}
-                            keyboardType='phone-pad'
-                            type={'money'}
-                            options={{
-                                precision: 0,
-                                separator: ',',
-                                delimiter: '.',
-                                unit: '',
-                                suffixUnit: ''
-                            }}
-                            placeholder='$ 0.00'
-                            value={this.state.periodo}
-                            includeRawValueInChangeText={true}
-                            onChangeText={this.updatePeriodo}
-                        />
 
-                        <View style={switchStyles.switch}>
-                            <TouchableOpacity
-                                style={[switchStyles.Touch, switchStyles.periodoMensalBg]}
-                                onLongPress={this.mesesToAnos}
-                                onPress={() => this.setPeriodoTipo('isPeriodoMensal')}
-                                onPressIn={this.Start_Progress}
-                                onPressOut={this.Stop_Progress}
-                            >
-                                <Text style={[switchStyles.txt, switchStyles.periodoMensalTxt]} >{R.strings.home.meses}</Text>
-                            </TouchableOpacity>
+                        <View style={styles.inputRow} >
+                            <Text style={[styles.txt, styles.txtLabel]}>{R.strings.home.aportes}</Text>
+                            <TextInputMask
+                                ref={(ref) => this.capitalField = ref}
+                                style={styles.textInput}
+                                keyboardType='phone-pad'
+                                type={'money'}
+                                options={{
+                                    separator: ',',
+                                    delimiter: '.',
+                                    unit: '$ ',
+                                }}
+                                placeholder='$ 0.00'
+                                value={this.state.aportes}
+                                includeRawValueInChangeText={true}
+                                // onChangeText={(capital) => { this.setState({ capital }) }}
+                                onChangeText={this.updateAportes}
 
-                            <TouchableOpacity
-                                style={[switchStyles.Touch, switchStyles.periodoAnualBg]}
-                                onLongPress={this.mesesToAnos}
-                                onPress={() => this.setPeriodoTipo('isPeriodoAnual')}
-                                onPressIn={this.Start_Progress}
-                                onPressOut={this.Stop_Progress}
-                            >
-                                <Text style={[switchStyles.txt, switchStyles.periodoAnualTxt]} >{R.strings.home.anos}</Text>
-                            </TouchableOpacity>
+                            />
                         </View>
-                    </View>
+
+                        <View style={styles.inputRow}>
+                            <Text style={[styles.txt, styles.txtLabel]}>{R.strings.home.taxa}</Text>
+                            <TextInputMask
+                                ref={(ref) => this.taxaField = ref}
+                                style={styles.textInput}
+                                keyboardType='phone-pad'
+                                type={'money'}
+                                options={{
+                                    separator: ',',
+                                    delimiter: '.',
+                                    unit: '',
+                                    suffixUnit: ''
+                                }}
+                                placeholder='$ 0.00'
+                                value={this.state.taxa}
+                                includeRawValueInChangeText={true}
+                                onChangeText={this.updateTaxa}
+                            />
+
+                            <View style={switchStyles.switch}>
+                                <TouchableOpacity
+                                    style={[switchStyles.Touch, switchStyles.taxaMensalBg]}
+                                    onLongPress={this.mensalToAnual}
+                                    onPress={() => this.setPeriodoTipo('isTaxaMensal')}
+                                    onPressIn={this.Start_Progress}
+                                    onPressOut={this.Stop_Progress}
+                                >
+                                    <Text style={[switchStyles.txt, switchStyles.taxaMensalTxt]} >{R.strings.home.mensal}</Text>
+                                </TouchableOpacity>
+
+                                <TouchableOpacity
+                                    style={[switchStyles.Touch, switchStyles.taxaAnualBg]}
+                                    onLongPress={this.mensalToAnual}
+                                    onPress={() => this.setPeriodoTipo('isTaxaAnual')}
+                                    onPressIn={this.Start_Progress}
+                                    onPressOut={this.Stop_Progress}
+                                >
+                                    <Text style={[switchStyles.txt, switchStyles.taxaAnualTxt]} >{R.strings.home.anual}</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+
+                        <View style={styles.inputRow}>
+                            <Text style={[styles.txt, styles.txtLabel]}>{R.strings.home.periodo}</Text>
+                            <TextInputMask
+                                ref={(ref) => this.periodoField = ref}
+                                style={styles.textInput}
+                                keyboardType='phone-pad'
+                                type={'money'}
+                                options={{
+                                    precision: 0,
+                                    separator: ',',
+                                    delimiter: '.',
+                                    unit: '',
+                                    suffixUnit: ''
+                                }}
+                                placeholder='$ 0.00'
+                                value={this.state.periodo}
+                                includeRawValueInChangeText={true}
+                                onChangeText={this.updatePeriodo}
+                            />
+
+                            <View style={switchStyles.switch}>
+                                <TouchableOpacity
+                                    style={[switchStyles.Touch, switchStyles.periodoMensalBg]}
+                                    onLongPress={this.mesesToAnos}
+                                    onPress={() => this.setPeriodoTipo('isPeriodoMensal')}
+                                    onPressIn={this.Start_Progress}
+                                    onPressOut={this.Stop_Progress}
+                                >
+                                    <Text style={[switchStyles.txt, switchStyles.periodoMensalTxt]} >{R.strings.home.meses}</Text>
+                                </TouchableOpacity>
+
+                                <TouchableOpacity
+                                    style={[switchStyles.Touch, switchStyles.periodoAnualBg]}
+                                    onLongPress={this.mesesToAnos}
+                                    onPress={() => this.setPeriodoTipo('isPeriodoAnual')}
+                                    onPressIn={this.Start_Progress}
+                                    onPressOut={this.Stop_Progress}
+                                >
+                                    <Text style={[switchStyles.txt, switchStyles.periodoAnualTxt]} >{R.strings.home.anos}</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
 
 
 
-                    {/* <View style={styles.calcRow}>
+                        {/* <View style={styles.calcRow}>
                         <TouchableOpacity style={styles.touchOpacity} onPress={this.relatorio}>
                             <Text style={[styles.txt, styles.txtButton]} >Calcular</Text>
                         </TouchableOpacity>
                     </View> */}
-                </View>
+                    </View>
 
-                {/* <Button style={styles.txtButton} onPress={this.calcular} title='Calcular' /> */}
-                {/* <ScrollView style={styles.resultRow}>
+                    {/* <Button style={styles.txtButton} onPress={this.calcular} title='Calcular' /> */}
+                    {/* <ScrollView style={styles.resultRow}>
                     <FlatList style={styles.flatList}
                         data={this.state.relatorioData}
                         // extraData={this.state}
                         renderItem={({ item, index }) => this.flatRender(item, index)} />
 
                 </ScrollView> */}
-                {/* <View style={{ height: 60 }} /> */}
+                    {/* <View style={{ height: 60 }} /> */}
                 </View>
             </KeyboardAwareScrollView>
         );
