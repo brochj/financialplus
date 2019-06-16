@@ -2,9 +2,8 @@ import React, { Component } from 'react';
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, FlatList, KeyboardAvoidingView, Button, ProgressBarAndroid } from "react-native";
 import { TextInputMask, MaskService } from "react-native-masked-text";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { NavigationActions } from "react-navigation";
 import { DrawerActions } from 'react-navigation-drawer';
-import * as Animatable from 'react-native-animatable';
+// import * as Animatable from 'react-native-animatable';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import R from 'res/R';
 

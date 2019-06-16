@@ -23,8 +23,11 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.brochcompany.financialplus"
+    },
+    "android": {
+      "package": "com.brochcompany.financialplus"
     }
-    
   }
 }
