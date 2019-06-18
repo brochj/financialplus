@@ -3,6 +3,8 @@ import { StyleSheet, Text, View, ScrollView, TouchableOpacity, FlatList, Keyboar
 import { TextInputMask, MaskService } from "react-native-masked-text";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { DrawerActions } from 'react-navigation-drawer';
+import { AdMobBanner, } from 'expo-ads-admob';
+import firebase from "firebase";
 // import * as Animatable from 'react-native-animatable';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import R from 'res/R';
@@ -56,6 +58,19 @@ export default class Home extends React.Component {
         this.flatRender = this.flatRender.bind(this);
         this.mensalToAnual = this.mensalToAnual.bind(this);
         this.mesesToAnos = this.mesesToAnos.bind(this);
+
+        let firebaseConfig = {
+            apiKey: "AIzaSyB5I-o0rukibiw7aGdOt-nkPSSRQT2uAlM",
+            authDomain: "financialplus-c818e.firebaseapp.com",
+            databaseURL: "https://financialplus-c818e.firebaseio.com",
+            projectId: "financialplus-c818e",
+            storageBucket: "financialplus-c818e.appspot.com",
+            messagingSenderId: "89244328522",
+            appId: "1:89244328522:web:cc034652592f2991"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
     }
     relatorio() {
         function insertValues(index) {
@@ -252,7 +267,9 @@ export default class Home extends React.Component {
             </View>
         );
     }
-
+    bannerError = () => {
+        // alert('erro') 
+    }
     render() {
 
         const switchStyles = {
@@ -311,18 +328,25 @@ export default class Home extends React.Component {
         }
 
         return (
-            <KeyboardAwareScrollView
-                resetScrollToCoords={{ x: 0, y: 0 }}
-                scrollEnabled={true}
-                // enableAutomaticScroll={true}
-                enableOnAndroid={true}
-                extraHeight={60}
-                extraScrollHeight={60}
-            >
-                <View>
+            <View>
+                <AdMobBanner
+                    bannerSize="fullBanner"
+                    adUnitID="ca-app-pub-9080032444400275/4921852795" // Test ID, Replace with your-admob-unit-id ca-app-pub-3940256099942544/6300978111
+                    testDeviceID="EMULATOR"
+                    onDidFailToReceiveAdWithError={this.bannerError} />
+                <KeyboardAwareScrollView
+                    resetScrollToCoords={{ x: 0, y: 0 }}
+                    scrollEnabled={true}
+                    // enableAutomaticScroll={true}
+                    enableOnAndroid={true}
+                    extraHeight={60}
+                    extraScrollHeight={60}
+                >
+
 
                     <ProgressBarAndroid style={{ marginTop: -5 }} color={R.colors.actionButton} styleAttr="Horizontal" progress={this.state.Progress_Value} indeterminate={false}
                     />
+
                     <View style={styles.resultArea}>
                         <Text style={[styles.txt, styles.resultLabel]}>{R.strings.home.capitalInvestido}</Text>
                         <Text style={[styles.txt, styles.resultValueLabel]}>{this.maskNumber(this.state.capital_inv)}</Text>
@@ -481,8 +505,8 @@ export default class Home extends React.Component {
 
                 </ScrollView> */}
                     {/* <View style={{ height: 60 }} /> */}
-                </View>
-            </KeyboardAwareScrollView>
+                </KeyboardAwareScrollView>
+            </View>
         );
     }
 }
