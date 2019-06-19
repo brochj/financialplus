@@ -1,38 +1,89 @@
 import React from 'react';
-import { createAppContainer, createDrawerNavigator } from 'react-navigation';
+import { createAppContainer, createDrawerNavigator , DrawerItems} from 'react-navigation';
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, FlatList, KeyboardAvoidingView, Button, ProgressBarAndroid, TextInput, SafeAreaView, Image, Dimensions } from "react-native";
 
 import HomeTab from './src/screens/main/HomeTab';
 import Login from './src/screens/login/Login';
 
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-const AppNavigator = createDrawerNavigator({
-  HomeTab: {
-    screen: HomeTab,
-    navigationOptions: {
-      title: `Juros Compostos`,
+import R from 'res/R';
+const {width} = Dimensions.get('window');
+const drawerStyles = {
+    container: {
+        flex: 1,
     },
-  },
-  Login: {
-    screen: Login
-  }
+    imageView: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingTop: 50,
+        paddingBottom: 20,
+        heigth: 150, 
+        backgroundColor: 'white'
+    }
+};
+
+const CustomDrawerComponent = (props) => (
+    <SafeAreaView style={drawerStyles.container}>
+        <View style={drawerStyles.imageView}>
+           <Image source={require('./assets/icon.orig.png')} style={{height: 100, width:100,borderRadius: 50}}/>   
+        </View>
+        <ScrollView>
+            <DrawerItems {...props}/>
+        </ScrollView>
+    </SafeAreaView>
+
+)
+const AppNavigator = createDrawerNavigator({
+    HomeTab: {
+        screen: HomeTab,
+        navigationOptions: {
+            title: R.strings.home.jurosCompostos,
+            drawerIcon: ({tintColor}) =>(
+                <MaterialIcons
+                    name="home"
+                    size={35}
+                    color={tintColor}
+                    style={{ width: 35 }}
+                />
+            ),
+        },
+    },
+    Login: {
+        screen: Login,
+        navigationOptions: {
+            title: R.strings.home.configuracoes,
+            drawerIcon: ({tintColor}) =>(
+                <MaterialIcons
+                    name="settings"
+                    size={35}
+                    color={tintColor}
+                    style={{ width: 35 }}
+                />
+            ),
+        },
+    }
 
 }, {
-    // drawerBackgroundColor: 'red',
-    drawerWidth: 300,
-    contentOptions: {
-      activeTintColor: 'red',
-      itemsContainerStyle: {
-        marginVertical: 0,
-      },
-      iconContainerStyle: {
-        opacity: 1
-      }
-    },
-    defaultNavigationOptions: {
-      header: null,
+        contentComponent: CustomDrawerComponent,
+        // drawerBackgroundColor: 'red',
+        drawerWidth: width*.75,
 
+        contentOptions: {
+            activeTintColor: R.palette.lightTxt.color,
+            activeBackgroundColor: R.palette.darkTxt.color,
+            itemsContainerStyle: {
+                marginVertical: 0,
+            },
+            iconContainerStyle: {
+                opacity: 1
+            }
+        },
+        defaultNavigationOptions: {
+            header: null,
+
+        }
     }
-  }
 );
 
 

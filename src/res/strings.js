@@ -27,6 +27,8 @@ const strings = {
         capitalInvestido: 'Capital Investido',
         rich: '$$$ Muito dinheiro $$$',
         jurosCompostos: 'Juros Compostos',
+        configuracoes: 'Configurações',
+        
     }
 }
 

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, FlatList, KeyboardAvoidingView, Button, ProgressBarAndroid } from "react-native";
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, FlatList, KeyboardAvoidingView, Button, ProgressBarAndroid, TextInput } from "react-native";
 import { TextInputMask, MaskService } from "react-native-masked-text";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { DrawerActions } from 'react-navigation-drawer';
@@ -14,6 +14,7 @@ export default class Home extends React.Component {
     static navigationOptions = ({ navigation }) => {
         return {
             title: R.strings.home.jurosCompostos,
+            // header: null,
             headerRight: (
                 <MaterialIcons
                     name="menu"
@@ -58,6 +59,7 @@ export default class Home extends React.Component {
         this.flatRender = this.flatRender.bind(this);
         this.mensalToAnual = this.mensalToAnual.bind(this);
         this.mesesToAnos = this.mesesToAnos.bind(this);
+        this.focus = this.focus.bind(this);
 
         let firebaseConfig = {
             apiKey: "AIzaSyB5I-o0rukibiw7aGdOt-nkPSSRQT2uAlM",
@@ -71,6 +73,9 @@ export default class Home extends React.Component {
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
 
+    }
+    focus() {
+        this.refs.textInput.focus();
     }
     relatorio() {
         function insertValues(index) {
@@ -270,6 +275,8 @@ export default class Home extends React.Component {
     bannerError = () => {
         // alert('erro') 
     }
+    
+
     render() {
 
         const switchStyles = {
@@ -339,8 +346,8 @@ export default class Home extends React.Component {
                     scrollEnabled={true}
                     // enableAutomaticScroll={true}
                     enableOnAndroid={true}
-                    extraHeight={60}
-                    extraScrollHeight={60}
+                    extraHeight={120}
+                    extraScrollHeight={120}
                 >
 
 
@@ -362,7 +369,6 @@ export default class Home extends React.Component {
                         <View style={styles.inputRow} >
                             <Text style={[styles.txt, styles.txtLabel]}>{R.strings.home.capital}</Text>
                             <TextInputMask
-                                ref={(ref) => this.capitalField = ref}
                                 style={styles.textInput}
                                 keyboardType='phone-pad'
                                 type={'money'}
@@ -374,9 +380,10 @@ export default class Home extends React.Component {
                                 placeholder='$ 0.00'
                                 value={this.state.capital}
                                 includeRawValueInChangeText={true}
-                                // onChangeText={(capital) => { this.setState({ capital }) }}
                                 onChangeText={this.updateCapital}
-
+                                // onSubmitEditing={()=>this.aportes.focus()}
+                                returnKeyType="next"
+                                
                             />
                         </View>
 
@@ -384,7 +391,7 @@ export default class Home extends React.Component {
                         <View style={styles.inputRow} >
                             <Text style={[styles.txt, styles.txtLabel]}>{R.strings.home.aportes}</Text>
                             <TextInputMask
-                                ref={(ref) => this.capitalField = ref}
+                                //  ref={(input) => (this.aportes = input)}
                                 style={styles.textInput}
                                 keyboardType='phone-pad'
                                 type={'money'}
@@ -396,8 +403,8 @@ export default class Home extends React.Component {
                                 placeholder='$ 0.00'
                                 value={this.state.aportes}
                                 includeRawValueInChangeText={true}
-                                // onChangeText={(capital) => { this.setState({ capital }) }}
                                 onChangeText={this.updateAportes}
+                                
 
                             />
                         </View>
@@ -405,7 +412,6 @@ export default class Home extends React.Component {
                         <View style={styles.inputRow}>
                             <Text style={[styles.txt, styles.txtLabel]}>{R.strings.home.taxa}</Text>
                             <TextInputMask
-                                ref={(ref) => this.taxaField = ref}
                                 style={styles.textInput}
                                 keyboardType='phone-pad'
                                 type={'money'}
