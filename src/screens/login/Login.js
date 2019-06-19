@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, Button } from "react-native";
+import { AdMobBanner, } from 'expo-ads-admob';
 import R from "res/R";
 
 export default class Login extends React.Component {
@@ -10,15 +11,36 @@ export default class Login extends React.Component {
 
     render() {
         return (
-            <View>
-                <Text>Login</Text>
-                
-                <Button title="Entrar"
-                // Essa Tela 2, é a chave definida na linha 14 de App.js
-                    onPress={() => { this.props.navigation.navigate('HomeTab'); }} /> 
+
+            <View style={styles.container}>
+                <View style={styles.container}>
+                    <Text>Em Desenvolvimento</Text>
+
+                </View>
+
+                <View style={styles.adBannerView}>
+                    <AdMobBanner
+                        bannerSize="mediumRectangle"
+                        adUnitID="ca-app-pub-9080032444400275/5340725001" // Test ID, Replace with your-admob-unit-id ca-app-pub-3940256099942544/6300978111
+                        testDeviceID="EMULATOR"
+                        onDidFailToReceiveAdWithError={this.bannerError} />
+
+                </View>
             </View>
 
 
         );
     }
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1
+    },
+    adBannerView: {
+        alignItems: 'center',
+        backgroundColor: '#fff'
+    }
+
+
+});

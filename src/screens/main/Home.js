@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, FlatList, KeyboardAvoidingView, Button, ProgressBarAndroid, TextInput } from "react-native";
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, FlatList, KeyboardAvoidingView, Button, ProgressBarAndroid, TextInput, Dimensions } from "react-native";
 import { TextInputMask, MaskService } from "react-native-masked-text";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { KeyboardAwareView } from 'react-native-keyboard-aware-view';
 import { DrawerActions } from 'react-navigation-drawer';
 import { AdMobBanner, } from 'expo-ads-admob';
 import firebase from "firebase";
 // import * as Animatable from 'react-native-animatable';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import R from 'res/R';
+
 
 export default class Home extends React.Component {
 
@@ -59,7 +61,6 @@ export default class Home extends React.Component {
         this.flatRender = this.flatRender.bind(this);
         this.mensalToAnual = this.mensalToAnual.bind(this);
         this.mesesToAnos = this.mesesToAnos.bind(this);
-        this.focus = this.focus.bind(this);
 
         let firebaseConfig = {
             apiKey: "AIzaSyB5I-o0rukibiw7aGdOt-nkPSSRQT2uAlM",
@@ -73,10 +74,9 @@ export default class Home extends React.Component {
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
 
+
     }
-    focus() {
-        this.refs.textInput.focus();
-    }
+    
     relatorio() {
         function insertValues(index) {
             s.juros = s.montante - s.capital;
@@ -87,7 +87,7 @@ export default class Home extends React.Component {
             });
         }
         let s = this.state;
-        if (s.capital != 0 && s.taxa != 0 && s.periodo != 0) {
+        if ((s.capital != 0 || s.aportes !=0) && s.taxa != 0 && s.periodo != 0) {
             s.relatorioData = [];
             s.montante = 0;
 
@@ -168,7 +168,7 @@ export default class Home extends React.Component {
             s.capital_inv = s.capital + s.aportes * s.periodo;
             s.juros = s.montante - s.capital_inv;
         }
-        if (s.capital != 0 && s.taxa != 0 && s.periodo != 0) {// se for passado valores,
+        if ((s.capital != 0 || s.aportes !=0) && s.taxa != 0 && s.periodo != 0) {// se for passado valores,
             if (this.state.isPeriodoAnual && this.state.isTaxaMensal) {
                 s.montante = (s.capital * Math.pow((1 + (s.taxa / 100)), s.periodo * 12)) + s.aportes * (1 + (s.taxa / 100)) * ((Math.pow(1 + (s.taxa / 100), s.periodo * 12) - 1) / (s.taxa / 100));
                 s.capital_inv = s.capital + s.aportes * s.periodo * 12;
@@ -276,6 +276,7 @@ export default class Home extends React.Component {
         // alert('erro') 
     }
     
+    
 
     render() {
 
@@ -333,14 +334,17 @@ export default class Home extends React.Component {
                 color: this.state.isPeriodoAnual ? R.colors.txt : R.colors.blueish[700],
             }
         }
-
+        const {width} =Dimensions.get('window');
         return (
             <View>
+                <View style={styles.adBannerView}>
+                      
                 <AdMobBanner
-                    bannerSize="fullBanner"
+                    bannerSize={(width <= 360)? 'banner':'smartBannerPortrait'}
                     adUnitID="ca-app-pub-9080032444400275/4921852795" // Test ID, Replace with your-admob-unit-id ca-app-pub-3940256099942544/6300978111
                     testDeviceID="EMULATOR"
                     onDidFailToReceiveAdWithError={this.bannerError} />
+                    </View>
                 <KeyboardAwareScrollView
                     resetScrollToCoords={{ x: 0, y: 0 }}
                     scrollEnabled={true}
@@ -510,7 +514,7 @@ export default class Home extends React.Component {
                         renderItem={({ item, index }) => this.flatRender(item, index)} />
 
                 </ScrollView> */}
-                    {/* <View style={{ height: 60 }} /> */}
+                    <View style={{ height: 120 }} />
                 </KeyboardAwareScrollView>
             </View>
         );
@@ -531,7 +535,7 @@ const styles = StyleSheet.create({
     inputRow: {
         // backgroundColor: '#2b4141',
         marginHorizontal: 10,
-        marginVertical: 10,
+        marginVertical: 5,
         flexDirection: 'row',
         alignItems: 'stretch',
         // height: '15%',
@@ -623,5 +627,9 @@ const styles = StyleSheet.create({
         backgroundColor: R.colors.blueish[50],
         marginVertical: 5,
         marginHorizontal: 20,
-    }
+    },
+    adBannerView: {
+        alignItems: 'center',
+        backgroundColor: '#fff'
+    }   
 });

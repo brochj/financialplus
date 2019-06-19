@@ -9,6 +9,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import R from 'res/R';
 const {width} = Dimensions.get('window');
+const iconSize = 25;
 const drawerStyles = {
     container: {
         flex: 1,
@@ -42,9 +43,9 @@ const AppNavigator = createDrawerNavigator({
             drawerIcon: ({tintColor}) =>(
                 <MaterialIcons
                     name="home"
-                    size={35}
+                    size={iconSize}
                     color={tintColor}
-                    style={{ width: 35 }}
+                    style={{ width: iconSize }}
                 />
             ),
         },
@@ -56,9 +57,9 @@ const AppNavigator = createDrawerNavigator({
             drawerIcon: ({tintColor}) =>(
                 <MaterialIcons
                     name="settings"
-                    size={35}
+                    size={iconSize}
                     color={tintColor}
-                    style={{ width: 35 }}
+                    style={{ width: iconSize }}
                 />
             ),
         },
@@ -68,10 +69,12 @@ const AppNavigator = createDrawerNavigator({
         contentComponent: CustomDrawerComponent,
         // drawerBackgroundColor: 'red',
         drawerWidth: width*.75,
-
         contentOptions: {
             activeTintColor: R.palette.lightTxt.color,
             activeBackgroundColor: R.palette.darkTxt.color,
+                    labelStyle: {
+                        fontSize: 15,
+                    },
             itemsContainerStyle: {
                 marginVertical: 0,
             },
