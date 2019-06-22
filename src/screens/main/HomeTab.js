@@ -3,6 +3,7 @@ import { StatusBar, Platform } from "react-native";
 import { createMaterialTopTabNavigator, createStackNavigator } from 'react-navigation';
 import Login from './../login/Login';
 import Home from './Home';
+import Results from './Results';
 import R from 'res/R';
 
 const statusBarHeight = Platform.OS === 'ios' ? 20 : StatusBar.currentHeight;
@@ -15,8 +16,12 @@ const HomeTabNavigator = createStackNavigator({
     Login: {
         screen: Login,
     },
+    Results: {
+        screen: Results,
+    }
 
 }, {
+    // initialRouteName: 'Results',
         defaultNavigationOptions: {
             headerStyle: {
                 backgroundColor: R.colors.blackish,

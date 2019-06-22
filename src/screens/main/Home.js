@@ -12,19 +12,37 @@ import R from 'res/R';
 
 
 export default class Home extends React.Component {
-
+    
+    
     static navigationOptions = ({ navigation }) => {
         return {
             title: R.strings.home.jurosCompostos,
             // header: null,
             headerRight: (
-                <MaterialIcons
-                    name="menu"
-                    size={35}
-                    onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
-                    color="#fff"
-                    style={{ marginRight: 10 }}
-                />
+                <View style={{flex:1,flexDirection:'row', alignItems: 'center'}}>
+
+                    <MaterialIcons
+                        name="trending-up"
+                        size={28}
+                        onPress={() => {
+                            navigation.setParams({
+                                taxa: 'new-value-of-param',
+                               });
+                               
+                            navigation.navigate('Results',{taxa: ' oii '});} }
+                        color="#fff"
+                        style={{ marginRight: 10 }}
+                    />
+                    <MaterialIcons
+                        name="menu"
+                        size={35}
+                        onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
+                        color="#fff"
+                        style={{ marginRight: 10 }}
+                    />
+                </View>
+
+
             ),
         };
     };
@@ -76,7 +94,7 @@ export default class Home extends React.Component {
 
 
     }
-    
+   
     relatorio() {
         function insertValues(index) {
             s.juros = s.montante - s.capital;
@@ -87,7 +105,7 @@ export default class Home extends React.Component {
             });
         }
         let s = this.state;
-        if ((s.capital != 0 || s.aportes !=0) && s.taxa != 0 && s.periodo != 0) {
+        if ((s.capital != 0 || s.aportes != 0) && s.taxa != 0 && s.periodo != 0) {
             s.relatorioData = [];
             s.montante = 0;
 
@@ -168,7 +186,7 @@ export default class Home extends React.Component {
             s.capital_inv = s.capital + s.aportes * s.periodo;
             s.juros = s.montante - s.capital_inv;
         }
-        if ((s.capital != 0 || s.aportes !=0) && s.taxa != 0 && s.periodo != 0) {// se for passado valores,
+        if ((s.capital != 0 || s.aportes != 0) && s.taxa != 0 && s.periodo != 0) {// se for passado valores,
             if (this.state.isPeriodoAnual && this.state.isTaxaMensal) {
                 s.montante = (s.capital * Math.pow((1 + (s.taxa / 100)), s.periodo * 12)) + s.aportes * (1 + (s.taxa / 100)) * ((Math.pow(1 + (s.taxa / 100), s.periodo * 12) - 1) / (s.taxa / 100));
                 s.capital_inv = s.capital + s.aportes * s.periodo * 12;
@@ -275,8 +293,8 @@ export default class Home extends React.Component {
     bannerError = () => {
         // alert('erro') 
     }
-    
-    
+
+
 
     render() {
 
@@ -334,17 +352,18 @@ export default class Home extends React.Component {
                 color: this.state.isPeriodoAnual ? R.colors.txt : R.colors.blueish[700],
             }
         }
-        const {width} =Dimensions.get('window');
+        const { width } = Dimensions.get('window');
         return (
             <View>
                 <View style={styles.adBannerView}>
-                      
-                <AdMobBanner
-                    bannerSize={(width <= 360)? 'banner':'smartBannerPortrait'}
-                    adUnitID="ca-app-pub-9080032444400275/4921852795" // Test ID, Replace with your-admob-unit-id ca-app-pub-3940256099942544/6300978111
-                    testDeviceID="EMULATOR"
-                    onDidFailToReceiveAdWithError={this.bannerError} />
-                    </View>
+
+                    <AdMobBanner
+                        bannerSize={(width <= 360) ? 'banner' : 'smartBannerPortrait'}
+                        adUnitID="ca-app-pub-9080032444400275/4921852795" // Test ID, Replace with your-admob-unit-id ca-app-pub-3940256099942544/6300978111
+                        testDeviceID="EMULATOR"
+                        onDidFailToReceiveAdWithError={this.bannerError} />
+                </View>
+               
                 <KeyboardAwareScrollView
                     resetScrollToCoords={{ x: 0, y: 0 }}
                     scrollEnabled={true}
@@ -387,7 +406,7 @@ export default class Home extends React.Component {
                                 onChangeText={this.updateCapital}
                                 // onSubmitEditing={()=>this.aportes.focus()}
                                 returnKeyType="next"
-                                
+
                             />
                         </View>
 
@@ -408,7 +427,7 @@ export default class Home extends React.Component {
                                 value={this.state.aportes}
                                 includeRawValueInChangeText={true}
                                 onChangeText={this.updateAportes}
-                                
+
 
                             />
                         </View>
@@ -605,22 +624,7 @@ const styles = StyleSheet.create({
 
     },
 
-    flatList: {
-        backgroundColor: '#FFF',
-    },
-    flatNome: {
-        fontSize: 26,
-    },
-    flatNome: {
-        fontSize: 14,
-    },
-    flatItem: {
-        padding: 10,
-        borderWidth: 1,
-        borderColor: 'black',
-        borderRadius: 3,
-        margin: 5,
-    },
+    
 
     separador: {
         height: 1.5,
@@ -631,5 +635,5 @@ const styles = StyleSheet.create({
     adBannerView: {
         alignItems: 'center',
         backgroundColor: '#fff'
-    }   
+    }
 });

@@ -21,7 +21,7 @@ export default class Login extends React.Component {
                 <View style={styles.adBannerView}>
                     <AdMobBanner
                         bannerSize="mediumRectangle"
-                        adUnitID="ca-app-pub-9080032444400275/5340725001" // Test ID, Replace with your-admob-unit-id ca-app-pub-3940256099942544/6300978111
+                        adUnitID="ca-app-pub-3940256099942544/6300978111" // Test ID, Replace with your-admob-unit-id ca-app-pub-3940256099942544/6300978111
                         testDeviceID="EMULATOR"
                         onDidFailToReceiveAdWithError={this.bannerError} />
 

@@ -28,7 +28,17 @@ const strings = {
         rich: '$$$ Muito dinheiro $$$',
         jurosCompostos: 'Juros Compostos',
         configuracoes: 'Configurações',
+        resultados: 'Resultados'
         
+    },
+    results:{
+        mes: 'Mês',
+        taxaAcumulada: 'Taxa Acumulada',
+        jurosAcumulado: 'Juros Acumulado',
+        montante: 'Capital Acumulado',
+        capitalInvestido: 'Capital Investido',
+        jurosDoPeriodo: 'Juros do período',
+        rendimentos: 'Rendimentos',
     }
 }
 
