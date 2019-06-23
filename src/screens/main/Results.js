@@ -87,6 +87,7 @@ export default class Results extends React.Component {
         this.relatorio = this.relatorio.bind(this);
         this.maskNumber = this.maskNumber.bind(this);
         this.insertValues = this.insertValues.bind(this);
+        this.getInputValues = this.getInputValues.bind(this);
         // this.relatorio();
 
     }
@@ -102,6 +103,21 @@ export default class Results extends React.Component {
         } else {
             return R.strings.home.rich;
         }
+    }
+
+    getInputValues(){
+        let s = this.state;
+        const { params } = this.props.navigation.state;
+        s.aportes= params.aportes;
+        s.periodo= params.periodo;
+        s.capital= params.capital;
+        s.taxa= params.taxa;
+        
+        s.isTaxaAnual= params.isTaxaAnual;
+        s.isTaxaMensal= params.isTaxaMensal;
+        s.isPeriodoAnual= params.isPeriodoAnual;
+        s.isPeriodoMensal= params.isPeriodoMensal;
+        this.relatorio();
     }
 
     insertValues(index) {
@@ -277,7 +293,7 @@ export default class Results extends React.Component {
         const { width } = Dimensions.get('window');
         return (
             <View style={styles.body}>
-                <Button title='calcular' onPress={this.relatorio} />
+                <Button title='calcular' onPress={this.getInputValues} />
 
                 <ScrollView style={styles.accordion}
                     ref={(view) => {

@@ -12,24 +12,18 @@ import R from 'res/R';
 
 
 export default class Home extends React.Component {
-    
-    
+
+
     static navigationOptions = ({ navigation }) => {
         return {
             title: R.strings.home.jurosCompostos,
             // header: null,
             headerRight: (
-                <View style={{flex:1,flexDirection:'row', alignItems: 'center'}}>
-
+                <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
                     <MaterialIcons
                         name="trending-up"
                         size={28}
-                        onPress={() => {
-                            navigation.setParams({
-                                taxa: 'new-value-of-param',
-                               });
-                               
-                            navigation.navigate('Results',{taxa: ' oii '});} }
+                        onPress={navigation.getParam('goToResults')}
                         color="#fff"
                         style={{ marginRight: 10 }}
                     />
@@ -45,6 +39,26 @@ export default class Home extends React.Component {
 
             ),
         };
+    };
+    componentDidMount() {
+        this.props.navigation.setParams({ goToResults: this._goToResults });
+    }
+
+    _goToResults = () => {
+        let s = this.state;
+        this.props.navigation.navigate('Results',
+            {
+            capital: s.capital,
+            aportes: s.aportes,
+            periodo: s.periodo,
+            taxa: s.taxa,
+
+            isTaxaAnual: s.isTaxaAnual,
+            isTaxaMensal: s.isTaxaMensal,
+            isPeriodoAnual: s.isPeriodoAnual,
+            isPeriodoMensal: s.isPeriodoMensal,
+            }
+        );
     };
 
     constructor(props) {
@@ -94,7 +108,7 @@ export default class Home extends React.Component {
 
 
     }
-   
+
     relatorio() {
         function insertValues(index) {
             s.juros = s.montante - s.capital;
@@ -363,7 +377,7 @@ export default class Home extends React.Component {
                         testDeviceID="EMULATOR"
                         onDidFailToReceiveAdWithError={this.bannerError} />
                 </View>
-               
+
                 <KeyboardAwareScrollView
                     resetScrollToCoords={{ x: 0, y: 0 }}
                     scrollEnabled={true}
@@ -624,7 +638,7 @@ const styles = StyleSheet.create({
 
     },
 
-    
+
 
     separador: {
         height: 1.5,
