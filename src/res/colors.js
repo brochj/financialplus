@@ -1,33 +1,32 @@
 
-
-
-
-
-
 const colors = {
-    title: '#00B75D',
-    text: '#0C222B',
-    actionButton: '#48e5c2',
+    primary: '#196A65', // 500
+    primaryVariant: '#1CA49C', // 700
+    secondary: '#FF71C8', // 200
+    secondaryVariant: '#018786', // 900
+    background: '#fcfcfc',
+    surface: '#f4f4f4',
 
-    blueish: {
-        50: '#e9f0f1',
-        100: '#c7d9dd',
-        200: '#a2c0c7',
-        300: '#7da7b0',
-        400: '#61949f',
-        500: '#45818e',
-        600: '#3e7986',
-        700: '#366e7b',
-        800: '#2e6471',
-        900: '#1f515f',
-        A100: '#9fe9ff',
-        A200: '#6cddff',
-        A400: '#39d2ff',
-        A700: '#1fccff',
-        'contrastDefaultColor': 'light',
-    },
+    onPrimary: '#FFF',
+    onSecondary: '#000',
+    onBackground: '#000',
+    onSurface: '#000',
 
-    blackish: '#2b4141',
+    disabled: '#E6E9E9',
+    error: '#e03126',
+    info: '#0095FF',
+    success: '#00E096',
+    warning: '#FFAA00',
+
+    onDisabled: '#C4CCCB',
+    onError: '#FFFEFC',
+    onInfo: '#FFFEFC',
+    onSuccess: '#FFFEFC',
+    onWarning: '#FFFEFC',
+    
+    input: '#F7F9FC',
+    inputBorder: '#BDC1CC',
+    onInput: '#282C34',
 };
 
 export default colors;

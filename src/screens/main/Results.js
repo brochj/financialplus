@@ -2,14 +2,16 @@ import React from "react";
 import { StyleSheet, Text, View, FlatList, Button, ScrollView, Dimensions } from "react-native";
 import { TextInputMask, MaskService } from "react-native-masked-text";
 import Accordion from 'react-native-collapsible/Accordion';
-import { DrawerActions } from 'react-navigation-drawer';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import Octicons from 'react-native-vector-icons/Octicons';
+import themeContext from "res/themeContext";
+
 import R from 'res/R';
 
 
 
 export default class Results extends React.Component {
+
+    static contextType = themeContext;
 
     static navigationOptions = ({ navigation }) => {
         return {
@@ -104,26 +106,26 @@ export default class Results extends React.Component {
         }
     }
 
-    getInputValues(){
+    getInputValues() {
         let s = this.state;
         const { params } = this.props.navigation.state;
-        s.aportes= params.aportes;
-        s.periodo= params.periodo;
-        s.capital= params.capital;
-        s.taxa= params.taxa;
-        
-        s.isTaxaAnual= params.isTaxaAnual;
-        s.isTaxaMensal= params.isTaxaMensal;
-        s.isPeriodoAnual= params.isPeriodoAnual;
-        s.isPeriodoMensal= params.isPeriodoMensal;
+        s.aportes = params.aportes;
+        s.periodo = params.periodo;
+        s.capital = params.capital;
+        s.taxa = params.taxa;
+
+        s.isTaxaAnual = params.isTaxaAnual;
+        s.isTaxaMensal = params.isTaxaMensal;
+        s.isPeriodoAnual = params.isPeriodoAnual;
+        s.isPeriodoMensal = params.isPeriodoMensal;
         this.relatorio();
     }
 
     insertValues(index) {
         let s = this.state;
-        
+
         s.juros = s.montante - s.capital_inv;
-        
+
         s.relatorioData.push({
             title: `${R.strings.results.mes} ${index}`,
             key: index.toString(),
@@ -146,7 +148,7 @@ export default class Results extends React.Component {
                     if (s.montante == 0) {
                         s.capital_inv = s.capital + s.aportes; //Ok
                         s.montanteAnterior = s.capital_inv; //ok
-                        s.montante = s.capital_inv * (1 + s.taxa/100); //Ok
+                        s.montante = s.capital_inv * (1 + s.taxa / 100); //Ok
                         this.insertValues(i);
                     } else {
                         s.capital_inv = s.capital + (s.aportes * i); //OK
@@ -160,7 +162,7 @@ export default class Results extends React.Component {
                     if (s.montante == 0) {
                         s.capital_inv = s.capital + s.aportes; //Ok
                         s.montanteAnterior = s.capital_inv; //ok
-                        s.montante = s.capital_inv * (1 + s.taxa/100); //Ok
+                        s.montante = s.capital_inv * (1 + s.taxa / 100); //Ok
                         this.insertValues(i);
                     } else {
                         s.capital_inv = s.capital + (s.aportes * i); //OK
@@ -175,7 +177,7 @@ export default class Results extends React.Component {
                     if (s.montante == 0) {
                         s.capital_inv = s.capital + s.aportes; //Ok
                         s.montanteAnterior = s.capital_inv; //ok
-                        s.montante = s.capital_inv * (1 + s.taxa/100); //Ok
+                        s.montante = s.capital_inv * (1 + s.taxa / 100); //Ok
                         this.insertValues(i);
                     } else {
                         s.capital_inv = s.capital + (s.aportes * i); //OK
@@ -207,7 +209,7 @@ export default class Results extends React.Component {
                     <MaterialIcons
                         name="expand-less"
                         size={25}
-                        color={R.colors.blackish}
+                        color={this.context.primary}
                         style={styles.headerIcon}
                     />
                 </View>
@@ -226,7 +228,7 @@ export default class Results extends React.Component {
                     <MaterialIcons
                         name="expand-more"
                         size={25}
-                        color={R.colors.blackish}
+                        color={this.context.primary}
                         style={styles.headerIcon}
                     />
 
@@ -309,11 +311,11 @@ export default class Results extends React.Component {
                         onChange={this._updateSections}
                         // collapsed={false}
 
-                        underlayColor={R.colors.blackish}
+                        underlayColor={this.context.primary}
                         expandMultiple={true}
                     />
                 </ScrollView>
-                
+
             </View>
         );
     }
@@ -388,8 +390,8 @@ const styles = StyleSheet.create({
     txtLabel: {
         fontSize: 16,
         textAlign: 'right',
-        color: R.palette.lightTxt.color,
-        backgroundColor: R.palette.darkTxt.color,
+        color: 'white',
+        backgroundColor: 'black',
         padding: 5,
         marginVertical: 1.5,
         borderTopLeftRadius: 2,
@@ -398,8 +400,8 @@ const styles = StyleSheet.create({
     },
     txtValue: {
         fontSize: 16,
-        color: R.palette.darkTxt.color,
-        backgroundColor: R.palette.lightTxt.color,
+        color: 'black',
+        backgroundColor: 'white',
         padding: 5,
         marginVertical: 1.5,
         borderTopRightRadius: 2,

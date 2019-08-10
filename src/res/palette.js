@@ -2,25 +2,25 @@ import colors from './colors';
 
 const palette = {
     heading: {
-        color: colors.title,
+        color: 'light',
         fontSize: 20,
         textAlign: 'center'
     },
     text: {
-        color: colors.text,
+        color: 'black',
         fontSize: 17,
         textAlign: 'center'
     },
     lightTxt: {
-        color: colors.blueish[50],
+        color: 'light',
     },
     darkTxt: {
-        color: colors.blackish,
+        color: 'black',
     },
     input: {
         borderTopRightRadius: 4,
         borderBottomRightRadius: 4,
-        backgroundColor: colors.blueish[50],
+        backgroundColor: 'black',
         color: colors.txt,
         letterSpacing: 1,
         fontSize: 18,
@@ -28,7 +28,7 @@ const palette = {
     },
     actionButton: {
         borderRadius: 3,
-        backgroundColor: colors.actionButton,
+        backgroundColor: 'black',
         padding: 15,
     },
 

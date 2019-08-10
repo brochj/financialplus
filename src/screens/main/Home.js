@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, FlatList, KeyboardAvoidingView, Button, ProgressBarAndroid, TextInput, Dimensions } from "react-native";
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, StatusBar, FlatList, KeyboardAvoidingView, Button, ProgressBarAndroid, TextInput, Dimensions } from "react-native";
 import { TextInputMask, MaskService } from "react-native-masked-text";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { DrawerActions } from 'react-navigation-drawer';
-// import * as Animatable from 'react-native-animatable';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { theme } from "res/themeContext";
+
 import R from 'res/R';
 
+console.disableYellowBox = true;
 
 export default class Home extends React.Component {
 
@@ -45,15 +47,15 @@ export default class Home extends React.Component {
         let s = this.state;
         this.props.navigation.navigate('Results',
             {
-            capital: s.capital,
-            aportes: s.aportes,
-            periodo: s.periodo,
-            taxa: s.taxa,
+                capital: s.capital,
+                aportes: s.aportes,
+                periodo: s.periodo,
+                taxa: s.taxa,
 
-            isTaxaAnual: s.isTaxaAnual,
-            isTaxaMensal: s.isTaxaMensal,
-            isPeriodoAnual: s.isPeriodoAnual,
-            isPeriodoMensal: s.isPeriodoMensal,
+                isTaxaAnual: s.isTaxaAnual,
+                isTaxaMensal: s.isTaxaMensal,
+                isPeriodoAnual: s.isPeriodoAnual,
+                isPeriodoMensal: s.isPeriodoMensal,
             }
         );
     };
@@ -91,7 +93,7 @@ export default class Home extends React.Component {
         this.mensalToAnual = this.mensalToAnual.bind(this);
         this.mesesToAnos = this.mesesToAnos.bind(this);
 
-        
+
 
 
     }
@@ -298,7 +300,6 @@ export default class Home extends React.Component {
 
 
     render() {
-
         const switchStyles = {
             switch: {
                 flex: 1,
@@ -310,68 +311,56 @@ export default class Home extends React.Component {
                 justifyContent: 'center',
                 paddingLeft: 10,
                 paddingRight: 10,
-                // borderRadius: 20,
                 minWidth: 70,
             },
             txt: {
-                color: '#edf2f4',
                 textAlign: 'center',
                 textAlignVertical: 'center',
                 fontSize: 18,
                 letterSpacing: 1,
             },
             taxaMensalBg: {
-                backgroundColor: this.state.isTaxaMensal ? R.colors.actionButton : R.colors.blueish[50],
+                backgroundColor: this.state.isTaxaMensal ? theme.primaryVariant : theme.input,
             },
             taxaMensalTxt: {
                 fontSize: 14,
-                color: this.state.isTaxaMensal ? R.colors.txt : R.colors.blueish[700],
+                color: this.state.isTaxaMensal ? theme.onPrimary : theme.onInput,
             },
             taxaAnualBg: {
-                backgroundColor: this.state.isTaxaAnual ? R.colors.actionButton : R.colors.blueish[50],
+                backgroundColor: this.state.isTaxaAnual ? theme.primaryVariant : theme.input,
                 borderTopRightRadius: 4,
                 borderBottomRightRadius: 4,
             },
             taxaAnualTxt: {
                 fontSize: 14,
-                color: this.state.isTaxaAnual ? R.colors.txt : R.colors.blueish[700],
+                color: this.state.isTaxaAnual ? theme.onPrimary : theme.onInput,
             },
             periodoMensalBg: {
-                backgroundColor: this.state.isPeriodoMensal ? R.colors.actionButton : R.colors.blueish[50],
+                backgroundColor: this.state.isPeriodoMensal ? theme.primaryVariant : theme.input,
             },
             periodoMensalTxt: {
                 fontSize: 14,
-                color: this.state.isPeriodoMensal ? R.colors.txt : R.colors.blueish[700],
+                color: this.state.isPeriodoMensal ? theme.onPrimary : theme.onInput,
             },
             periodoAnualBg: {
-                backgroundColor: this.state.isPeriodoAnual ? R.colors.actionButton : R.colors.blueish[50],
+                backgroundColor: this.state.isPeriodoAnual ? theme.primaryVariant : theme.input,
                 borderTopRightRadius: 4,
                 borderBottomRightRadius: 4,
             },
             periodoAnualTxt: {
                 fontSize: 14,
-                color: this.state.isPeriodoAnual ? R.colors.txt : R.colors.blueish[700],
+                color: this.state.isPeriodoAnual ? theme.onPrimary : theme.onInput,
             }
         }
         const { width } = Dimensions.get('window');
         return (
-            <View>
-                <View style={styles.adBannerView}>
+            <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
+                <StatusBar backgroundColor={theme.primary} barStyle="light-content" />
 
-                    
-                </View>
-
-                <KeyboardAwareScrollView
-                    resetScrollToCoords={{ x: 0, y: 0 }}
-                    scrollEnabled={true}
-                    // enableAutomaticScroll={true}
-                    enableOnAndroid={true}
-                    extraHeight={120}
-                    extraScrollHeight={120}
-                >
+                <View>
 
 
-                    <ProgressBarAndroid style={{ marginTop: -5 }} color={R.colors.actionButton} styleAttr="Horizontal" progress={this.state.Progress_Value} indeterminate={false}
+                    <ProgressBarAndroid style={{ marginTop: -5 }} color={theme.primaryVariant} styleAttr="Horizontal" progress={this.state.Progress_Value} indeterminate={false}
                     />
 
                     <View style={styles.resultArea}>
@@ -401,8 +390,9 @@ export default class Home extends React.Component {
                                 value={this.state.capital}
                                 includeRawValueInChangeText={true}
                                 onChangeText={this.updateCapital}
-                                // onSubmitEditing={()=>this.aportes.focus()}
+                                onSubmitEditing={() => this.aportesInput.getElement().focus()}
                                 returnKeyType="next"
+                                blurOnSubmit={false}
 
                             />
                         </View>
@@ -411,7 +401,6 @@ export default class Home extends React.Component {
                         <View style={styles.inputRow} >
                             <Text style={[styles.txt, styles.txtLabel]}>{R.strings.home.aportes}</Text>
                             <TextInputMask
-                                //  ref={(input) => (this.aportes = input)}
                                 style={styles.textInput}
                                 keyboardType='phone-pad'
                                 type={'money'}
@@ -424,6 +413,10 @@ export default class Home extends React.Component {
                                 value={this.state.aportes}
                                 includeRawValueInChangeText={true}
                                 onChangeText={this.updateAportes}
+                                ref={ref => this.aportesInput = ref}
+                                onSubmitEditing={() => this.taxaInput.getElement().focus()}
+                                returnKeyType="next"
+                                blurOnSubmit={false}
 
 
                             />
@@ -445,6 +438,10 @@ export default class Home extends React.Component {
                                 value={this.state.taxa}
                                 includeRawValueInChangeText={true}
                                 onChangeText={this.updateTaxa}
+                                ref={ref => this.taxaInput = ref}
+                                onSubmitEditing={() => this.periodoInput.getElement().focus()}
+                                returnKeyType="next"
+                                blurOnSubmit={false}
                             />
 
                             <View style={switchStyles.switch}>
@@ -473,7 +470,7 @@ export default class Home extends React.Component {
                         <View style={styles.inputRow}>
                             <Text style={[styles.txt, styles.txtLabel]}>{R.strings.home.periodo}</Text>
                             <TextInputMask
-                                ref={(ref) => this.periodoField = ref}
+                                ref={ref => this.periodoInput = ref}
                                 style={styles.textInput}
                                 keyboardType='phone-pad'
                                 type={'money'}
@@ -488,6 +485,8 @@ export default class Home extends React.Component {
                                 value={this.state.periodo}
                                 includeRawValueInChangeText={true}
                                 onChangeText={this.updatePeriodo}
+                                returnKeyType="next"
+                                blurOnSubmit={false}
                             />
 
                             <View style={switchStyles.switch}>
@@ -514,25 +513,12 @@ export default class Home extends React.Component {
                         </View>
 
 
-
-                        {/* <View style={styles.calcRow}>
-                        <TouchableOpacity style={styles.touchOpacity} onPress={this.relatorio}>
-                            <Text style={[styles.txt, styles.txtButton]} >Calcular</Text>
-                        </TouchableOpacity>
-                    </View> */}
                     </View>
 
-                    {/* <Button style={styles.txtButton} onPress={this.calcular} title='Calcular' /> */}
-                    {/* <ScrollView style={styles.resultRow}>
-                    <FlatList style={styles.flatList}
-                        data={this.state.relatorioData}
-                        // extraData={this.state}
-                        renderItem={({ item, index }) => this.flatRender(item, index)} />
 
-                </ScrollView> */}
                     <View style={{ height: 120 }} />
-                </KeyboardAwareScrollView>
-            </View>
+                </View>
+            </KeyboardAvoidingView>
         );
     }
 }
@@ -540,52 +526,39 @@ export default class Home extends React.Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center'
+        alignItems: 'center',
     },
 
     inputContainer: {
+        paddingHorizontal: 10,
         flex: 1,
-
     },
 
     inputRow: {
-        // backgroundColor: '#2b4141',
-        marginHorizontal: 10,
         marginVertical: 5,
         flexDirection: 'row',
         alignItems: 'stretch',
-        // height: '15%',
         height: 50,
     },
-
-    calcRow: {
-        // backgroundColor: '#2b4141',
-        marginHorizontal: 10,
-        marginVertical: 10,
-        height: 50,
-        justifyContent: 'center',
-    },
-
 
     txt: {
-        ...R.palette.lightTxt,
         textAlign: 'center',
         textAlignVertical: 'center',
         fontSize: 18,
-        //fontWeight: '500',
         letterSpacing: 1,
-
     },
 
     txtLabel: {
         width: '30%',
-        backgroundColor: R.palette.darkTxt.color,
+        backgroundColor: theme.primary,
+        color: theme.onPrimary,
         borderTopLeftRadius: 4,
         borderBottomLeftRadius: 4,
     },
 
     textInput: {
         ...R.palette.input,
+        backgroundColor: theme.input,
         width: '70%',
     },
 
@@ -595,18 +568,24 @@ const styles = StyleSheet.create({
     },
     resultLabel: {
         fontSize: 15,
-        color: R.colors.blackish
+        color: theme.onSurface
     },
     resultValueLabel: {
         fontSize: 25,
         fontWeight: 'bold',
-        color: R.colors.blackish,
+        color: theme.onSurface,
     },
     resultArea: {
+        flex: 1,
+        backgroundColor: theme.surface,
+        margin: 10,
+        paddingVertical: 15,
+        borderRadius: 4,
+        // elevation: 4,
     },
 
     txtButton: {
-        color: '#2b4141',
+        color: theme.onBackground,
     },
 
     touchOpacity: {
@@ -617,7 +596,7 @@ const styles = StyleSheet.create({
     },
 
     resultTxt: {
-        ...R.palette.lightTxt,
+
 
     },
 
@@ -625,7 +604,7 @@ const styles = StyleSheet.create({
 
     separador: {
         height: 1.5,
-        backgroundColor: R.colors.blueish[50],
+        backgroundColor: 'black',
         marginVertical: 5,
         marginHorizontal: 20,
     },
@@ -634,3 +613,4 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff'
     }
 });
+
